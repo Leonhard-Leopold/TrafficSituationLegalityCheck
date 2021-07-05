@@ -115,6 +115,11 @@ public class TrafficSituationLegalityCheck {
 		ResultSet results = qexec.execSelect();
 
 
+		List<Car> cars = new ArrayList<Car>();
+		List<Cyclist> cyclists = new ArrayList<Cyclist>();
+		List<Utility> utilities = new ArrayList<Utility>();
+
+
 		log.info("Iterates over the result set");
 		while (results.hasNext()) {
 			QuerySolution sol = results.nextSolution();
