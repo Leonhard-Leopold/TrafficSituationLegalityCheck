@@ -1,11 +1,14 @@
 package at.tugraz.ist.ais.is.practical;
 
+import org.apache.jena.base.Sys;
 import org.apache.jena.ontology.*;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QuerySolution;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.util.iterator.ExtendedIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,10 +89,52 @@ public class TrafficSituationLegalityCheck {
 	}
 
 	public static void main(String[] args) {
-		 //test_ontology();
+		//test_ontology();
 
 		OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-		model.read("src/main/java/at/tugraz/ist/ais/is/practical/owl/crossroads1_test.owl");
+		model.read("src/main/java/at/tugraz/ist/ais/is/practical/owl/crossroads_example1.owl");
+
+
+		String query = String.join(System.lineSeparator(),
+"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+		"PREFIX owl: <http://www.w3.org/2002/07/owl#>",
+		"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+		"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+				"SELECT distinct ?individual ?property ?realatedObject",
+				"WHERE {",
+					"?individual rdf:type owl:NamedIndividual.",
+					"?individual ?property ?realatedObject .",
+					"filter (?realatedObject != owl:NamedIndividual).",
+					"}",
+		"ORDER BY ?individual");
+
+		log.info("Query execution is created for the example query");
+		QueryExecution qexec = QueryExecutionFactory.create(query, model);
+
+		log.info("Obtains the result set");
+		ResultSet results = qexec.execSelect();
+
+
+		log.info("Iterates over the result set");
+		while (results.hasNext()) {
+			QuerySolution sol = results.nextSolution();
+			log.info("Solution: " + sol);
+			//log.info("Solution: " + results.getResultVars());
+			Resource individual = sol.getResource("individual");
+			Resource property = sol.getResource("property");
+			Resource realatedObject = sol.getResource("realatedObject");
+
+			log.info("individual: " + individual.toString().split(("#"))[1]);
+			log.info("property: " + property.toString().split(("#"))[1]);
+			log.info("realatedObject: " + realatedObject.toString().split(("#"))[1]);
+
+			//Map to objects
+		}
+
+		System.out.print("HERE\n\n");
+		System.out.print(model.listIndividuals());
+
+
 
 
 		// TODO load the data from the ontology using queries

@@ -19,6 +19,7 @@ public class Cyclist {
         this.name = name;
     }
 
+    //zb direkt hier queries wo man
     public Lane getLane() {
         return lane;
     }
