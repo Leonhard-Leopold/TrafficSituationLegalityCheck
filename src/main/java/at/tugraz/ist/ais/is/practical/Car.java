@@ -3,6 +3,7 @@ import org.slf4j.Logger;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public class Car {
     private String name = null;
@@ -17,23 +18,27 @@ public class Car {
         if(name == null)
             this.name = "Some car";
         this.lane = lane;
-        this.blinking = blinking;
-        if(blinking == "straight")
+        if (blinking!=null)
+            this.blinking = blinking.replace("blinking_", "");
+        if(Objects.equals(blinking, "straight"))
             this.blinking = null;
-        this.direction = direction;
         if(direction == null)
             this.direction = "standing";
+        else
+            this.direction = direction.replace("driving_", "");;
+
     }
 
     public Boolean findTarget(Logger log, List<Lane> lanes){
-        if (this.getBlinking() != null && this.getDirection() != "standing" && this.getDirection() != this.getBlinking()) {
-            log.error("Blinking and Driving Direction not consistent on " + this.getName() + "!");
+        if (this.getBlinking() != null && !this.getDirection().equals("standing") && !this.getDirection().equals(this.getBlinking())) {
+            log.error("Blinking and driving direction not consistent on " + this.getName() + "!");
             return false;
         }
         String position = this.getLane().getPosition();
         String target = this.getBlinking() != null ? this.getBlinking() : this.getDirection();
-        //TODO if a car is doing nothing (no blinking no driving) I assume it is going straight
-        if (target == null || target == "standing")
+
+        //if a car is doing nothing (no blinking no driving) I assume it is going straight
+        if (target == null || target.equals("standing"))
             target = "straight";
         this.setTarget_direction(target);
 
@@ -43,16 +48,16 @@ public class Car {
             laneMap.put(lane.getPosition(), lane);
         }
 
-        if ((target == "right" && position == "right") ||(target == "straight" && position == "bottom") ||(target == "left" && position == "left"))
+        if ((target.equals("right") && position.equals("right")) ||(target.equals("straight") && position.equals("bottom")) ||(target.equals("left") && position.equals("left")))
             this.setTarget_lane(laneMap.get("top"));
-        else if ((target == "right" && position == "left") ||(target == "straight" && position == "top") ||(target == "left" && position == "right"))
+        else if ((target.equals("right") && position.equals("left")) ||(target.equals("straight") && position.equals("top")) ||(target.equals("left") && position.equals("right")))
             this.setTarget_lane(laneMap.get("bottom"));
-        else if ((target == "right" && position == "top") ||(target == "straight" && position == "right") ||(target == "left" && position == "bottom"))
+        else if ((target.equals("right") && position.equals("top")) ||(target.equals("straight") && position.equals("right")) ||(target.equals("left") && position.equals("bottom")))
             this.setTarget_lane(laneMap.get("left"));
-        else if ((target == "right" && position == "bottom") ||(target == "straight" && position == "left") ||(target == "left" && position == "top"))
+        else if ((target.equals("right") && position.equals("bottom")) ||(target.equals("straight") && position.equals("left")) ||(target.equals("left") && position.equals("top")))
             this.setTarget_lane(laneMap.get("right"));
 
-        log.info(this.getName() + " is blinking " + this.getBlinking() + " and is driving " + this.getDirection() +
+        log.info(this.getName() + " is " + (this.getBlinking() == null ? "not blinking" : "blinking " + this.getBlinking()) + " and is driving " + this.getDirection() +
                 " while being located on the " + position + " lane! Thus, it wants to drive to the lane on the " + this.getTarget_lane().getPosition() + "!");
         return true;
     }

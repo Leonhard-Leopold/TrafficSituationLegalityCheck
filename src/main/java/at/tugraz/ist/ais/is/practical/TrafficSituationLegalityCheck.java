@@ -13,9 +13,10 @@ import org.apache.jena.util.iterator.ExtendedIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
 
 import static at.tugraz.ist.ais.is.practical.Utility.*;
 
@@ -89,22 +90,32 @@ public class TrafficSituationLegalityCheck {
 	}
 
 	public static void main(String[] args) {
-		//test_ontology();
-
 		OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-		model.read("src/main/java/at/tugraz/ist/ais/is/practical/owl/crossroads_example1.owl");
 
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+		String file_nr = "1";
+		try {
+			System.out.println("\nWelcome to the Traffic Situation Legality Checker!\n" +
+					"There are X different predefined ontologies you can test.\n" +
+					"Which one do you want to use (Enter the number): ");
+			file_nr = reader.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		model.read("src/main/java/at/tugraz/ist/ais/is/practical/owl/crossroads_example"+file_nr+".owl");
 
 		String query = String.join(System.lineSeparator(),
-"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
 		"PREFIX owl: <http://www.w3.org/2002/07/owl#>",
 		"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
 		"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
-				"SELECT distinct ?individual ?property ?realatedObject",
+				"SELECT distinct ?individual ?property ?relatedObject",
 				"WHERE {",
 					"?individual rdf:type owl:NamedIndividual.",
-					"?individual ?property ?realatedObject .",
-					"filter (?realatedObject != owl:NamedIndividual).",
+					"?individual ?property ?relatedObject .",
+					"filter (?relatedObject != owl:NamedIndividual).",
 					"}",
 		"ORDER BY ?individual");
 
@@ -116,72 +127,85 @@ public class TrafficSituationLegalityCheck {
 
 
 		List<Car> cars = new ArrayList<Car>();
+		List<Lane> lanes = new ArrayList<Lane>();
 		List<Cyclist> cyclists = new ArrayList<Cyclist>();
-		List<Utility> utilities = new ArrayList<Utility>();
+		List<Pedestrian> pedestrians = new ArrayList<Pedestrian>();
 
+
+
+		Map<String, Map<String, String>> map =new HashMap<>();
 
 		log.info("Iterates over the result set");
 		while (results.hasNext()) {
 			QuerySolution sol = results.nextSolution();
-			log.info("Solution: " + sol);
-			//log.info("Solution: " + results.getResultVars());
-			Resource individual = sol.getResource("individual");
-			Resource property = sol.getResource("property");
-			Resource realatedObject = sol.getResource("realatedObject");
+			String individual = sol.getResource("individual").toString().split(("#"))[1];
+			String property = sol.getResource("property").toString().split(("#"))[1];
+			String relatedObject = sol.getResource("relatedObject").toString().split(("#"))[1];
 
-			log.info("individual: " + individual.toString().split(("#"))[1]);
-			log.info("property: " + property.toString().split(("#"))[1]);
-			log.info("realatedObject: " + realatedObject.toString().split(("#"))[1]);
-
-			//Map to objects
+			if (map.containsKey(individual)){
+				map.get(individual).put(property,relatedObject);
+			}
+			else{
+				map.put(individual,new HashMap(){{put(property,relatedObject);}});
+			}
 		}
 
-		System.out.print("HERE\n\n");
-		System.out.print(model.listIndividuals());
+		// First create the lanes, since they are needed for the position of other elements
+		HashMap<String, Lane> laneMap = new HashMap<String, Lane>();
+		for ( String key : map.keySet() ) {
+			Map<String, String> attributes = map.get(key);
+			String type = attributes.get("type");
+			if(type.equals("lanes")){
+				Lane l = new Lane(attributes.get("position"), false, false, null, null);
+				lanes.add(l);
+				laneMap.put(key, l);
+			}
+		}
 
+		for ( String key : map.keySet() ) {
+			Map<String, String> attributes = map.get(key);
+			String type = attributes.get("type");
 
+			switch(type){
+				case "cars":
+					cars.add(new Car(key, laneMap.get(attributes.get("on_lane")),
+							attributes.get("blinking"), attributes.get("direction")));
+					break;
+				case "cyclists":
+					cyclists.add(new Cyclist(key, laneMap.get(attributes.get("on_lane"))));
+					break;
+				case "pedestrians":
+					pedestrians.add(new Pedestrian(key, laneMap.get(attributes.get("on_lane"))));
+					break;
+				case "sign_yield":
+					laneMap.get(attributes.get("on_lane")).setTraffic_sign("yield");
+					break;
+				case "sign_stop":
+					laneMap.get(attributes.get("on_lane")).setTraffic_sign("stop");
+					break;
+				case "traffic_light_green":
+					laneMap.get(attributes.get("on_lane")).setTraffic_light("green");
+					break;
+				case "traffic_light_red":
+					laneMap.get(attributes.get("on_lane")).setTraffic_light("red");
+					break;
+				case "lane_markings_cyclists":
+					laneMap.get(attributes.get("on_lane")).setCyclist_crossing(true);
+					break;
+				case "lane_markings_pedestrians":
+					laneMap.get(attributes.get("on_lane")).setPedestrian_crossing(true);
+					break;
+			}
+		}
 
-
-		// TODO load the data from the ontology using queries
-		// TODO if the data needs to be queried everytime instead of once and loaded into objects, then we need to
-		//  replace all getter and setter methods with queries
+		checkLegality(lanes, cars, cyclists, pedestrians);
 
 		// TODO Theory questions:
 		//  1. if one lane has a yield sign and the other a stop sign, are the equal, or not
 		//  (if not --> add code to right of way function)
-		//  2. is standing still illegal when you could drive
-		//  (if yes --> add code to check for all standing cars if they could drive into the direction they are blinking)
 
-        Test1();
 
 	}
-    public static void Test1(){
-		// All of this should be queried from the ontology
-        log.info("_____________________Example 1_____________________");
-        List<Lane> lanes = new ArrayList<Lane>();
-        Lane lane_top = new Lane("top",true, false, null, "yield");
-        Lane lane_right = new Lane("right",false, false, null, null);
-        Lane lane_left = new Lane("left",false, false, null, null);
-        Lane lane_bottom = new Lane("bottom",false, false, null, "yield");
-        Collections.addAll(lanes, lane_top, lane_right, lane_left, lane_bottom);
-
-        List<Cyclist> cyclists = new ArrayList<Cyclist>();
-        Cyclist cyclist1 = new Cyclist("Cyclist Bob ", lane_top);
-        Collections.addAll(cyclists, cyclist1);
-
-        List<Pedestrian> pedestrians = new ArrayList<Pedestrian>();
-		// Pedestrian pedestrian1 = new Pedestrian("Pedestrian Bob ", lane_top);
-		// Collections.addAll(pedestrians, pedestrian1);
-
-        List<Car> cars = new ArrayList<Car>();
-        Car car1 = new Car("Car 1", lane_right, "right", "right");
-        Car car2 = new Car("Car 2", lane_top, null, "straight");
-        Car car3 = new Car("Car 3", lane_bottom, null, "standing");
-        Collections.addAll(cars, car1, car2, car3);
-
-        checkLegality(lanes, cars, cyclists, pedestrians);
-
-    }
 
     // checking if the situation is legal
 	public static boolean checkLegality(List<Lane> lanes, List<Car> cars, List<Cyclist> cyclists, List<Pedestrian> pedestrians) {
@@ -197,7 +221,7 @@ public class TrafficSituationLegalityCheck {
 
 		// check if driving on red traffic light
 		for (Car car : cars) {
-			if(car.getDirection() != "standing" && car.getLane().getTraffic_light() == "red"){
+			if(!Objects.equals(car.getDirection(), "standing") && Objects.equals(car.getLane().getTraffic_light(), "red")){
 				log.error(car.getName() + " is driving over a red light");
 				return false;
 			}
@@ -206,9 +230,9 @@ public class TrafficSituationLegalityCheck {
 
 		// check if a car is blinking in the wrong direction
 		for (Car car : cars) {
-			if ((car.getBlinking() == null && car.getDirection() != "standing" && car.getDirection() != "straight") ||
-					(car.getBlinking() != null && car.getDirection() == "straight") ||
-					(car.getBlinking() != null && car.getDirection() != "standing" && car.getBlinking() != car.getDirection() )) {
+			if ((car.getBlinking() == null && !Objects.equals(car.getDirection(), "standing") && !Objects.equals(car.getDirection(), "straight")) ||
+					(car.getBlinking() != null && Objects.equals(car.getDirection(), "straight")) ||
+					(car.getBlinking() != null && !Objects.equals(car.getDirection(), "standing") && !Objects.equals(car.getBlinking(), car.getDirection()))) {
 				log.error(car.getName() + " is blinking incorrectly");
 				return false;
 			}
@@ -239,7 +263,7 @@ public class TrafficSituationLegalityCheck {
 		for (Car car : cars) {
 			Lane tl = car.getTarget_lane();
 			for (Cyclist cyclist : cyclists){
-				if(car.getDirection() != "standing" && tl == cyclist.getLane()){
+				if(!Objects.equals(car.getDirection(), "standing") && tl == cyclist.getLane()){
 					log.error(car.getName() + " is going to drive over a cyclist");
 					return false;
 				}
@@ -251,7 +275,7 @@ public class TrafficSituationLegalityCheck {
 		for (Car car : cars) {
 			Lane tl = car.getTarget_lane();
 			for (Pedestrian pedestrian : pedestrians){
-				if(car.getDirection() != "standing" && tl == pedestrian.getLane()){
+				if(!Objects.equals(car.getDirection(), "standing") && tl == pedestrian.getLane()){
 					log.error(car.getName() + " is going to drive over a pedestrian");
 					return false;
 				}
@@ -261,9 +285,9 @@ public class TrafficSituationLegalityCheck {
 
 		// check if turning right and someone to your left who does not have to give way is driving straight
 		for (Car car1 : cars) {
-			if (car1.getDirection() == "right") {
+			if (Objects.equals(car1.getDirection(), "right")) {
 				for (Car car2 : cars) {
-					if (leftOf(car2.getLane(), car1.getLane()) && rightOfWay(car1, car2) == car2 && car2.getTarget_direction() == "straight"){
+					if (leftOf(car2.getLane(), car1.getLane()) && rightOfWay(car1, car2) == car2 && Objects.equals(car2.getTarget_direction(), "straight")){
 						log.debug("Issue at turning part 1");
 						log.error(car1.getName() + " is impeding " + car2.getName());
 						return false;
@@ -274,9 +298,9 @@ public class TrafficSituationLegalityCheck {
 
 		// check if turning right and someone on the opposite side who does not have to give way is driving left
 		for (Car car1 : cars) {
-			if (car1.getDirection() == "right") {
+			if (Objects.equals(car1.getDirection(), "right")) {
 				for (Car car2 : cars) {
-					if (otherSideOf(car2.getLane(), car1.getLane()) && rightOfWay(car1, car2) == car2 && car2.getTarget_direction() == "left"){
+					if (otherSideOf(car2.getLane(), car1.getLane()) && rightOfWay(car1, car2) == car2 && Objects.equals(car2.getTarget_direction(), "left")){
 						log.debug("Issue at turning part 2");
 						log.error(car1.getName() + " is impeding " + car2.getName());
 						return false;
@@ -289,7 +313,7 @@ public class TrafficSituationLegalityCheck {
 
 		// check if driving straight and someone to your right who does not have to give way is driving in any direction
 		for (Car car1 : cars) {
-			if (car1.getDirection() == "straight") {
+			if (Objects.equals(car1.getDirection(), "straight")) {
 				for (Car car2 : cars) {
 					if (rightOf(car2.getLane(), car1.getLane()) && rightOfWay(car1, car2) == car2){
 						log.debug("Issue at turning part 3");
@@ -301,9 +325,9 @@ public class TrafficSituationLegalityCheck {
 		}
 		// check if driving straight and someone on the opposite side who does not have to give way is driving left
 		for (Car car1 : cars) {
-			if (car1.getDirection() == "straight") {
+			if (Objects.equals(car1.getDirection(), "straight")) {
 				for (Car car2 : cars) {
-					if (otherSideOf(car2.getLane(), car1.getLane()) && rightOfWay(car1, car2) == car2 && car2.getTarget_direction() == "left"){
+					if (otherSideOf(car2.getLane(), car1.getLane()) && rightOfWay(car1, car2) == car2 && Objects.equals(car2.getTarget_direction(), "left")){
 						log.debug("Issue at turning part 4");
 						log.error(car1.getName() + " is impeding " + car2.getName());
 						return false;
@@ -314,9 +338,9 @@ public class TrafficSituationLegalityCheck {
 
 		// check if driving straight and someone to your left who does not have to give way is driving straight or left
 		for (Car car1 : cars) {
-			if (car1.getDirection() == "straight") {
+			if (Objects.equals(car1.getDirection(), "straight")) {
 				for (Car car2 : cars) {
-					if (leftOf(car2.getLane(), car1.getLane()) && rightOfWay(car1, car2) == car2 && (car2.getTarget_direction() == "straight" || car2.getTarget_direction() == "left")){
+					if (leftOf(car2.getLane(), car1.getLane()) && rightOfWay(car1, car2) == car2 && (Objects.equals(car2.getTarget_direction(), "straight") || Objects.equals(car2.getTarget_direction(), "left"))){
 						log.debug("Issue at turning part 5");
 						log.error(car1.getName() + " is impeding " + car2.getName());
 						return false;
@@ -328,9 +352,9 @@ public class TrafficSituationLegalityCheck {
 
 		// check if driving left and someone to your right who does not have to give way is driving straight or left
 		for (Car car1 : cars) {
-			if (car1.getDirection() == "left") {
+			if (Objects.equals(car1.getDirection(), "left")) {
 				for (Car car2 : cars) {
-					if (rightOf(car2.getLane(), car1.getLane()) && rightOfWay(car1, car2) == car2 && (car2.getTarget_direction() == "straight" || car2.getTarget_direction() == "left")){
+					if (rightOf(car2.getLane(), car1.getLane()) && rightOfWay(car1, car2) == car2 && (Objects.equals(car2.getTarget_direction(), "straight") || Objects.equals(car2.getTarget_direction(), "left"))){
 						log.debug("Issue at turning part 6");
 						log.error(car1.getName() + " is impeding " + car2.getName());
 						return false;
@@ -340,9 +364,9 @@ public class TrafficSituationLegalityCheck {
 		}
 		// check if driving left and someone on the opposite side who does not have to give way is driving straight or right
 		for (Car car1 : cars) {
-			if (car1.getDirection() == "left") {
+			if (Objects.equals(car1.getDirection(), "left")) {
 				for (Car car2 : cars) {
-					if (otherSideOf(car2.getLane(), car1.getLane()) && rightOfWay(car1, car2) == car2 && (car2.getTarget_direction() == "straight" || car2.getTarget_direction() == "right")){
+					if (otherSideOf(car2.getLane(), car1.getLane()) && rightOfWay(car1, car2) == car2 && (Objects.equals(car2.getTarget_direction(), "straight") || Objects.equals(car2.getTarget_direction(), "right"))){
 						log.debug("Issue at turning part 7");
 						log.error(car1.getName() + " is impeding " + car2.getName());
 						return false;
@@ -353,9 +377,9 @@ public class TrafficSituationLegalityCheck {
 
 		// check if driving left and someone to your left who does not have to give way is driving straight or left
 		for (Car car1 : cars) {
-			if (car1.getDirection() == "left") {
+			if (Objects.equals(car1.getDirection(), "left")) {
 				for (Car car2 : cars) {
-					if (leftOf(car2.getLane(), car1.getLane()) && rightOfWay(car1, car2) == car2 && (car2.getTarget_direction() == "straight" || car2.getTarget_direction() == "left")){
+					if (leftOf(car2.getLane(), car1.getLane()) && rightOfWay(car1, car2) == car2 && (Objects.equals(car2.getTarget_direction(), "straight") || Objects.equals(car2.getTarget_direction(), "left"))){
 						log.debug("Issue at turning part 8");
 						log.error(car1.getName() + " is impeding " + car2.getName());
 						return false;
