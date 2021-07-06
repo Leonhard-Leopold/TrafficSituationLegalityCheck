@@ -1,12 +1,12 @@
 package at.tugraz.ist.ais.is.practical;
 
 public class Lane {
-    private String position = null;
-    private Boolean cyclist_crossing = false;
-    private Boolean pedestrian_crossing = false;
-    private Boolean parking_spot = false;
-    private String traffic_light = null;
-    private String traffic_sign = null;
+    private String position;
+    private Boolean cyclist_crossing;
+    private Boolean pedestrian_crossing;
+    private Boolean parking_spot;
+    private String traffic_light;
+    private String traffic_sign;
 
     public Lane(String position, Boolean cyclist_crossing, Boolean pedestrian_crossing, Boolean parking_spot, String traffic_light, String traffic_sign) {
         this.position = position;

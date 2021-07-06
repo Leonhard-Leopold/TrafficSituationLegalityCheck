@@ -1,16 +1,8 @@
 package at.tugraz.ist.ais.is.practical;
 
-import org.apache.jena.base.Sys;
-import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.apache.jena.ontology.*;
-import org.apache.jena.query.QueryExecution;
-import org.apache.jena.query.QueryExecutionFactory;
-import org.apache.jena.query.QuerySolution;
-import org.apache.jena.query.ResultSet;
-import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.rdf.model.Resource;
-import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.riot.RiotNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,151 +13,31 @@ import java.util.*;
 
 import static at.tugraz.ist.ais.is.practical.Utility.*;
 
-//inner class
-class OntData {
-
-    List<Car> cars;
-    List<Lane> lanes;
-    List<Cyclist> cyclists;
-    List<Pedestrian> pedestrians;
-
-    public OntData(List<Car> cars, List<Lane> lanes, List<Cyclist> cyclists, List<Pedestrian> pedestrians) {
-
-        this.cars = cars;
-        this.lanes = lanes;
-        this.cyclists = cyclists;
-        this.pedestrians = pedestrians;
-    }
-
-}
-
 public class TrafficSituationLegalityCheck {
 
     private static final Logger log = LoggerFactory.getLogger(TrafficSituationLegalityCheck.class);
 
-    public static OntData loadModelAndParseObjects(OntModel model) {
-        String query = String.join(System.lineSeparator(),
-                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
-                "PREFIX owl: <http://www.w3.org/2002/07/owl#>",
-                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
-                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
-                "SELECT distinct ?individual ?property ?relatedObject",
-                "WHERE {",
-                "?individual rdf:type owl:NamedIndividual.",
-                "?individual ?property ?relatedObject .",
-                "filter (?relatedObject != owl:NamedIndividual).",
-                "}",
-                "ORDER BY ?individual");
-
-        QueryExecution qexec = QueryExecutionFactory.create(query, model);
-
-        log.info("Obtains the result set");
-        ResultSet results = qexec.execSelect();
-
-
-        List<Car> cars = new ArrayList<Car>();
-        List<Lane> lanes = new ArrayList<Lane>();
-        List<Cyclist> cyclists = new ArrayList<Cyclist>();
-        List<Pedestrian> pedestrians = new ArrayList<Pedestrian>();
-
-
-        Map<String, Map<String, String>> map = new HashMap<>();
-        while (results.hasNext()) {
-            QuerySolution sol = results.nextSolution();
-            String individual = sol.getResource("individual").toString().split(("#"))[1];
-            String property = sol.getResource("property").toString().split(("#"))[1];
-            String relatedObject = sol.getResource("relatedObject").toString().split(("#"))[1];
-
-            if (map.containsKey(individual)) {
-                map.get(individual).put(property, relatedObject);
-            } else {
-                map.put(individual, new HashMap() {{
-                    put(property, relatedObject);
-                }});
-            }
-        }
-
-        // First create the lanes, since they are needed for the position of other elements
-        HashMap<String, Lane> laneMap = new HashMap<String, Lane>();
-        for (String key : map.keySet()) {
-            Map<String, String> attributes = map.get(key);
-            String type = attributes.get("type");
-            if (type.equals("lanes")) {
-                Lane l = new Lane(attributes.get("position"), false, false, false, null, null);
-                lanes.add(l);
-                laneMap.put(key, l);
-            }
-        }
-
-        for (String key : map.keySet()) {
-            Map<String, String> attributes = map.get(key);
-            String type = attributes.get("type");
-
-            switch (type) {
-                case "cars":
-                    cars.add(new Car(key, laneMap.get(attributes.get("on_lane")),
-                            attributes.get("blinking"), attributes.get("direction"), laneMap.get(attributes.get("parking_on")),
-                            "car", attributes.get("is_overtaking")));
-                    break;
-                case "streetcar":
-                    cars.add(new Car(key, laneMap.get(attributes.get("on_lane")),
-                            attributes.get("blinking"), attributes.get("direction"), laneMap.get(attributes.get("parking_on")),
-                            "streetcar", attributes.get("is_overtaking")));
-                    break;
-                case "cyclists":
-                    cyclists.add(new Cyclist(key, laneMap.get(attributes.get("on_lane"))));
-                    break;
-                case "pedestrians":
-                    pedestrians.add(new Pedestrian(key, laneMap.get(attributes.get("on_lane"))));
-                    break;
-                case "sign_yield":
-                    laneMap.get(attributes.get("on_lane")).setTraffic_sign("yield");
-                    break;
-                case "sign_stop":
-                    laneMap.get(attributes.get("on_lane")).setTraffic_sign("stop");
-                    break;
-                case "traffic_light_green":
-                    laneMap.get(attributes.get("on_lane")).setTraffic_light("green");
-                    break;
-                case "traffic_light_red":
-                    laneMap.get(attributes.get("on_lane")).setTraffic_light("red");
-                    break;
-                case "lane_markings_cyclists":
-                    laneMap.get(attributes.get("on_lane")).setCyclist_crossing(true);
-                    break;
-                case "lane_markings_pedestrians":
-                    laneMap.get(attributes.get("on_lane")).setPedestrian_crossing(true);
-                    break;
-                case "lane_markings_parking_spot":
-                    laneMap.get(attributes.get("on_lane")).setParking_spot(true);
-                    break;
-            }
-        }
-
-        return new OntData(cars, lanes, cyclists, pedestrians);
-    }
-
     public static void main(String[] args) {
-        OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        List<String> list = Lists.newArrayList("1");
-        String file_nr = "1";
 
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        
         try {
             while (true) {
                 System.out.println("\nWelcome to the Traffic Situation Legality Checker!\n" +
                         "There are X different predefined ontologies you can test.\n" +
                         "Which one do you want to use (Enter a number [X-Y] or 'e' for exit): ");
-                file_nr = reader.readLine();
+                String file_nr = reader.readLine();
                 if (file_nr.equals("e")) {
                     System.out.println("\nEnd");
                     break;
                 }
-                if (list.contains(file_nr)) {
+                try {
+                    OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
                     model.read("src/main/java/at/tugraz/ist/ais/is/practical/owl/crossroads_example" + file_nr + ".owl");
-                    OntData data = loadModelAndParseObjects(model);
-                    checkLegality(data.lanes, data.cars, data.cyclists, data.pedestrians);
-                } else {
+                    OntData data = new OntData();
+                    data.loadModelAndParseObjects(model);
+                    checkLegality(data.getLanes(), data.getCars(), data.getCyclists(), data.getPedestrians());
+                } catch(RiotNotFoundException e) {
                     System.out.println("Ontology not found...");
                 }
 
@@ -274,12 +146,10 @@ public class TrafficSituationLegalityCheck {
                 }
 
                 //a car cannot overtake a car that is on another lane
-                if (Objects.equals(car.getDirection(), "standing")) {
-                    for (Car car1 : cars) {
-                        if (Objects.equals(car.getOvertaking(), car1.getName()) && !Objects.equals(car.getLane(), car1.getLane())) {
-                            log.error(car.getName() + " is overtaking " + car1.getName() + ", but they are not on the same lane!");
-                            return false;
-                        }
+                for (Car car1 : cars) {
+                    if (Objects.equals(car.getOvertaking(), car1.getName()) && !Objects.equals(car.getLane(), car1.getLane())) {
+                        log.error(car.getName() + " is overtaking " + car1.getName() + ", but they are not on the same lane!");
+                        return false;
                     }
                 }
 
@@ -302,8 +172,9 @@ public class TrafficSituationLegalityCheck {
                 // if overtaking and impeding the other car
                 for (Car car1 : cars) {
                     if (Objects.equals(car.getOvertaking(), car1.getName())) {
-                        if ((car.getDirection() == "straight" && car1.getDirection() == "left") ||
-                                (car.getDirection() == "right" && (car1.getDirection() == "left" || car1.getDirection() == "straight"))) {
+                        if ((Objects.equals(car.getDirection(), "straight") && Objects.equals(car1.getDirection(), "left")) ||
+                                (Objects.equals(car.getDirection(), "right") && (Objects.equals(car1.getDirection(), "left") ||
+                                        Objects.equals(car1.getDirection(), "straight")))) {
                             log.error(car.getName() + " is impeding " + car1.getName() + " while overtaking!");
                             return false;
                         }

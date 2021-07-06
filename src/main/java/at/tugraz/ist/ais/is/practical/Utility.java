@@ -1,6 +1,5 @@
 package at.tugraz.ist.ais.is.practical;
 
-import java.util.List;
 import java.util.Objects;
 
 public class Utility {
@@ -9,30 +8,24 @@ public class Utility {
     public static boolean leftOf(Lane lane1, Lane lane2){
         String pos1 = lane1.getPosition();
         String pos2 = lane2.getPosition();
-        if((Objects.equals(pos1, "bottom") && Objects.equals(pos2, "right")) || (Objects.equals(pos1, "right") && Objects.equals(pos2, "top")) ||
-                (Objects.equals(pos1, "top") && Objects.equals(pos2, "left")) || (Objects.equals(pos1, "left") && Objects.equals(pos2, "bottom")))
-            return true;
-        return false;
+        return (Objects.equals(pos1, "bottom") && Objects.equals(pos2, "right")) || (Objects.equals(pos1, "right") && Objects.equals(pos2, "top")) ||
+                (Objects.equals(pos1, "top") && Objects.equals(pos2, "left")) || (Objects.equals(pos1, "left") && Objects.equals(pos2, "bottom"));
     }
 
     // if lane1 is right of lane2
     public static boolean rightOf(Lane lane1, Lane lane2){
         String pos1 = lane1.getPosition();
         String pos2 = lane2.getPosition();
-        if((Objects.equals(pos1, "bottom") && Objects.equals(pos2, "left")) || (Objects.equals(pos1, "right") && Objects.equals(pos2, "bottom")) ||
-                (Objects.equals(pos1, "top") && Objects.equals(pos2, "right")) || (Objects.equals(pos1, "left") && Objects.equals(pos2, "top")))
-            return true;
-        return false;
+        return (Objects.equals(pos1, "bottom") && Objects.equals(pos2, "left")) || (Objects.equals(pos1, "right") && Objects.equals(pos2, "bottom")) ||
+                (Objects.equals(pos1, "top") && Objects.equals(pos2, "right")) || (Objects.equals(pos1, "left") && Objects.equals(pos2, "top"));
     }
 
     // if lane1 is on the other side of lane2
     public static boolean otherSideOf(Lane lane1, Lane lane2){
         String pos1 = lane1.getPosition();
         String pos2 = lane2.getPosition();
-        if((Objects.equals(pos1, "bottom") && Objects.equals(pos2, "top")) || (Objects.equals(pos1, "right") && Objects.equals(pos2, "left")) ||
-                (Objects.equals(pos1, "top") && Objects.equals(pos2, "bottom")) || (Objects.equals(pos1, "left") && Objects.equals(pos2, "right")))
-            return true;
-        return false;
+        return (Objects.equals(pos1, "bottom") && Objects.equals(pos2, "top")) || (Objects.equals(pos1, "right") && Objects.equals(pos2, "left")) ||
+                (Objects.equals(pos1, "top") && Objects.equals(pos2, "bottom")) || (Objects.equals(pos1, "left") && Objects.equals(pos2, "right"));
     }
 
     public static Car rightOfWay(Car car1, Car car2) {

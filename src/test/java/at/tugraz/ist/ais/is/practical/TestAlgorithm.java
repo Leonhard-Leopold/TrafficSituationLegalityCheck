@@ -27,24 +27,24 @@ public class TestAlgorithm {
 
     @Before
     public void testSetup() {
-        lanes = new ArrayList<Lane>();
+        lanes = new ArrayList<>();
         Lane lane_top = new Lane("top",false, false, false,null, null);
         Lane lane_right = new Lane("right",false, false, false,null, null);
         Lane lane_left = new Lane("left",false, false, false,null, null);
         Lane lane_bottom = new Lane("bottom",false, false, false,null, null);
         Collections.addAll(lanes, lane_top, lane_right, lane_left, lane_bottom);
 
-        cyclists = new ArrayList<Cyclist>();
-        pedestrians = new ArrayList<Pedestrian>();
+        cyclists = new ArrayList<>();
+        pedestrians = new ArrayList<>();
 
-        cars = new ArrayList<Car>();
+        cars = new ArrayList<>();
         Car car1 = new Car("Car 1", null, null, null, null, null, null);
         Car car2 = new Car("Car 2", null, null, null, null, null, null);
         Car car3 = new Car("Car 3", null, null, null, null, null, null);
         Car car4 = new Car("Car 4", null, null, null, null, null, null);
         Collections.addAll(cars, car1, car2, car3, car4);
 
-        laneMap = new HashMap<String, Lane>();
+        laneMap = new HashMap<>();
         for (Lane lane : lanes){
             laneMap.put(lane.getPosition(), lane);
         }

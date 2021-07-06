@@ -36,9 +36,25 @@
     
 
 
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#is_overtaking -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#is_overtaking">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#on_lane -->
 
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#on_lane">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#parking_on -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#parking_on">
         <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
     </owl:ObjectProperty>
     
@@ -123,6 +139,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#lane_markings_parking_spot -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#lane_markings_parking_spot">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#lane_markings"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#lane_markings_pedestrians -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#lane_markings_pedestrians">
@@ -183,6 +207,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#street_cars -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#street_cars">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#individuals"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#traffic_lights -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#traffic_lights">
@@ -235,17 +267,6 @@
     
 
 
-    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#blue_car -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#blue_car">
-        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#cars"/>
-        <blinking rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#blinking_right"/>
-        <direction rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#driving_right"/>
-        <on_lane rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#right_lane"/>
-    </owl:NamedIndividual>
-    
-
-
     <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#bottom -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#bottom">
@@ -263,20 +284,42 @@
     
 
 
-    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#cyclist1 -->
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#car1 -->
 
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#cyclist1">
-        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#cyclists"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#car1">
+        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#cars"/>
+        <direction rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#driving_straight"/>
+        <on_lane rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#bottom_lane"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#car2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#car2">
+        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#cars"/>
+        <blinking rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#blinking_right"/>
+        <on_lane rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#left_lane"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#car3 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#car3">
+        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#cars"/>
         <on_lane rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#top_lane"/>
     </owl:NamedIndividual>
     
 
 
-    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#cyclists_crossing1 -->
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#car4 -->
 
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#cyclists_crossing1">
-        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#lane_markings_cyclists"/>
-        <on_lane rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#top_lane"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#car4">
+        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#cars"/>
+        <blinking rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#blinking_left"/>
+        <direction rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#driving_left"/>
+        <on_lane rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#right_lane"/>
     </owl:NamedIndividual>
     
 
@@ -322,11 +365,10 @@
     
 
 
-    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#orange_car -->
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#parking -->
 
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#orange_car">
-        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#cars"/>
-        <on_lane rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#bottom_lane"/>
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#parking">
+        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#states"/>
     </owl:NamedIndividual>
     
 
@@ -361,34 +403,6 @@
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#top_lane">
         <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#lanes"/>
         <position rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#top"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#yellow_car -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#yellow_car">
-        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#cars"/>
-        <direction rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#driving_straight"/>
-        <on_lane rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#top_lane"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#yield_sign_1 -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#yield_sign_1">
-        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#sign_yield"/>
-        <on_lane rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#top_lane"/>
-    </owl:NamedIndividual>
-    
-
-
-    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#yield_sign_2 -->
-
-    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#yield_sign_2">
-        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#sign_yield"/>
-        <on_lane rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#bottom_lane"/>
     </owl:NamedIndividual>
     
 

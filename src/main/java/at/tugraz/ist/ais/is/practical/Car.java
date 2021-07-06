@@ -7,15 +7,15 @@ import java.util.List;
 import java.util.Objects;
 
 public class Car {
-    private String name = null;
-    private Lane lane = null;
-    private String blinking = null;
-    private String direction = null;
-    private String target_direction = null;
-    private Lane target_lane = null;
-    private Lane parking_on = null;
-    private String type = null;
-    private String overtaking = null;
+    private String name;
+    private Lane lane;
+    private String blinking;
+    private String direction;
+    private String target_direction;
+    private Lane target_lane;
+    private Lane parking_on;
+    private String type;
+    private String overtaking;
 
     public Car(String name, Lane lane, String blinking, String direction, Lane parking_on, String type, String overtaking) {
         this.name = name;
