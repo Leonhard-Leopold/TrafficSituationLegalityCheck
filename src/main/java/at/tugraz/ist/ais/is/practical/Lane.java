@@ -4,13 +4,15 @@ public class Lane {
     private String position = null;
     private Boolean cyclist_crossing = false;
     private Boolean pedestrian_crossing = false;
+    private Boolean parking_spot = false;
     private String traffic_light = null;
     private String traffic_sign = null;
 
-    public Lane(String position, Boolean cyclist_crossing, Boolean pedestrian_crossing, String traffic_light, String traffic_sign) {
+    public Lane(String position, Boolean cyclist_crossing, Boolean pedestrian_crossing, Boolean parking_spot, String traffic_light, String traffic_sign) {
         this.position = position;
         this.cyclist_crossing = cyclist_crossing;
         this.pedestrian_crossing = pedestrian_crossing;
+        this.parking_spot = parking_spot;
         this.traffic_light = traffic_light;
         this.traffic_sign = traffic_sign;
     }
@@ -58,6 +60,15 @@ public class Lane {
 
     public Lane setTraffic_sign(String traffic_sign) {
         this.traffic_sign = traffic_sign;
+        return this;
+    }
+
+    public Boolean getParking_spot() {
+        return parking_spot;
+    }
+
+    public Lane setParking_spot(Boolean parking_spot) {
+        this.parking_spot = parking_spot;
         return this;
     }
 }

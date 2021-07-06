@@ -45,6 +45,12 @@ public class Utility {
         if (Objects.equals(lane1.getTraffic_light(), "red") && Objects.equals(lane1.getTraffic_light(), "green"))
             return car2;
 
+        //check if someone is a streetcar
+        if(Objects.equals(car1.getType(), "streetcar") && !Objects.equals(car2.getType(), "streetcar"))
+            return car1;
+        if(Objects.equals(car2.getType(), "streetcar") && !Objects.equals(car1.getType(), "streetcar"))
+            return car2;
+
         // check if someone has to give way based on the traffic sign
         if(lane1.getTraffic_sign() == null && (Objects.equals(lane2.getTraffic_sign(), "stop") || Objects.equals(lane2.getTraffic_sign(), "yield")))
             return car1;

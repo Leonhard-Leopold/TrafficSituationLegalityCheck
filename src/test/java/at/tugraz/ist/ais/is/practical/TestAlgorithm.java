@@ -28,20 +28,20 @@ public class TestAlgorithm {
     @Before
     public void testSetup() {
         lanes = new ArrayList<Lane>();
-        Lane lane_top = new Lane("top",false, false, null, null);
-        Lane lane_right = new Lane("right",false, false, null, null);
-        Lane lane_left = new Lane("left",false, false, null, null);
-        Lane lane_bottom = new Lane("bottom",false, false, null, null);
+        Lane lane_top = new Lane("top",false, false, false,null, null);
+        Lane lane_right = new Lane("right",false, false, false,null, null);
+        Lane lane_left = new Lane("left",false, false, false,null, null);
+        Lane lane_bottom = new Lane("bottom",false, false, false,null, null);
         Collections.addAll(lanes, lane_top, lane_right, lane_left, lane_bottom);
 
         cyclists = new ArrayList<Cyclist>();
         pedestrians = new ArrayList<Pedestrian>();
 
         cars = new ArrayList<Car>();
-        Car car1 = new Car("Car 1", null, null, null);
-        Car car2 = new Car("Car 2", null, null, null);
-        Car car3 = new Car("Car 3", null, null, null);
-        Car car4 = new Car("Car 4", null, null, null);
+        Car car1 = new Car("Car 1", null, null, null, null, null, null);
+        Car car2 = new Car("Car 2", null, null, null, null, null, null);
+        Car car3 = new Car("Car 3", null, null, null, null, null, null);
+        Car car4 = new Car("Car 4", null, null, null, null, null, null);
         Collections.addAll(cars, car1, car2, car3, car4);
 
         laneMap = new HashMap<String, Lane>();
@@ -66,7 +66,7 @@ public class TestAlgorithm {
         assertFalse( checkLegality(lanes, cars, cyclists, pedestrians));
     }
     @Test
-    public void blinkingButGoinfStraight() {
+    public void blinkingButGoingStraight() {
         log.info("\n\n---------- Blinking but going straight ----------");
         cars.get(0).setLane(laneMap.get("top")).setDirection("straight").setBlinking("left");
         assertFalse( checkLegality(lanes, cars, cyclists, pedestrians));
@@ -112,6 +112,27 @@ public class TestAlgorithm {
         laneMap.get("top").setTraffic_light("red");
         cars.get(0).setLane(laneMap.get("top")).setDirection("standing").setBlinking("right");
         assertTrue( checkLegality(lanes, cars, cyclists, pedestrians));
+    }
+    @Test
+    public void parkingInconsistently() {
+        log.info("\n\n---------- Parking Inconsistently ----------");
+        laneMap.get("top").setParking_spot(true);
+        cars.get(0).setLane(laneMap.get("bottom")).setParking_on(laneMap.get("top"));
+        assertFalse( checkLegality(lanes, cars, cyclists, pedestrians));
+    }
+    @Test
+    public void parkingCorrectly() {
+        log.info("\n\n---------- Parking Correctly ----------");
+        laneMap.get("top").setParking_spot(true);
+        cars.get(0).setLane(laneMap.get("top")).setParking_on(laneMap.get("top"));
+        assertTrue( checkLegality(lanes, cars, cyclists, pedestrians));
+    }
+    @Test
+    public void parkingIncorrectly() {
+        log.info("\n\n---------- Parking Incorrectly ----------");
+        laneMap.get("top").setParking_spot(false);
+        cars.get(0).setLane(laneMap.get("top")).setParking_on(laneMap.get("top"));
+        assertFalse( checkLegality(lanes, cars, cyclists, pedestrians));
     }
     @Test
     public void drivingTowardsAnEmptyCyclistCrossing() {
@@ -195,6 +216,121 @@ public class TestAlgorithm {
         cars.get(2).setLane(laneMap.get("bottom")).setDirection("left").setBlinking("left");
         cars.get(3).setLane(laneMap.get("left")).setDirection("left").setBlinking("left");
         assertFalse( checkLegality(lanes, cars, cyclists, pedestrians));
+    }
+
+    @Test
+    public void streetCarGoingFirst() {
+        log.info("\n\n---------- Streetcar going first even on a subordinate street ----------");
+        cars.get(0).setLane(laneMap.get("top").setTraffic_sign("yield")).setDirection("straight").setType("streetcar");
+        cars.get(1).setLane(laneMap.get("right")).setDirection("standing");
+        assertTrue( checkLegality(lanes, cars, cyclists, pedestrians));
+    }
+
+    @Test
+    public void streetCarGoingSecond() {
+        log.info("\n\n---------- Streetcar going second on a subordinate street ----------");
+        cars.get(0).setLane(laneMap.get("top").setTraffic_sign("yield")).setDirection("standing").setType("streetcar");
+        cars.get(1).setLane(laneMap.get("right")).setDirection("straight");
+        assertFalse( checkLegality(lanes, cars, cyclists, pedestrians));
+    }
+
+    @Test
+    public void overtakingWithoutDriving() {
+        log.info("\n\n---------- Overtaking a car without driving ----------");
+        cars.get(0).setLane(laneMap.get("top")).setDirection("standing");
+        cars.get(1).setLane(laneMap.get("top")).setDirection("standing").setOvertaking(cars.get(0).getName());
+        assertFalse( checkLegality(lanes, cars, cyclists, pedestrians));
+    }
+
+    @Test
+    public void overtakingWithoutBlinking() {
+        log.info("\n\n---------- Overtaking a car without blinking left ----------");
+        cars.get(0).setLane(laneMap.get("top")).setDirection("standing");
+        cars.get(1).setLane(laneMap.get("top")).setDirection("straight").setOvertaking(cars.get(0).getName());
+        assertFalse( checkLegality(lanes, cars, cyclists, pedestrians));
+    }
+
+    @Test
+    public void overtakingWithBlinking() {
+        log.info("\n\n---------- Overtaking a car without blinking left ----------");
+        cars.get(0).setLane(laneMap.get("top")).setDirection("standing");
+        cars.get(1).setLane(laneMap.get("top")).setDirection("straight").setOvertaking(cars.get(0).getName()).setBlinking("left");
+        assertTrue( checkLegality(lanes, cars, cyclists, pedestrians));
+    }
+
+
+    @Test
+    public void overtakingCarOnDifferentLane() {
+        log.info("\n\n---------- Overtaking a car on an different lane ----------");
+        cars.get(0).setLane(laneMap.get("left")).setDirection("standing");
+        cars.get(1).setLane(laneMap.get("top")).setDirection("straight").setOvertaking(cars.get(0).getName()).setBlinking("left");
+        assertFalse( checkLegality(lanes, cars, cyclists, pedestrians));
+    }
+
+    @Test
+    public void overtakingCarOnSubordinateStreet() {
+        log.info("\n\n---------- Overtaking a car on a subordinate street----------");
+        cars.get(0).setLane(laneMap.get("top").setTraffic_sign("yield")).setDirection("standing");
+        cars.get(1).setLane(laneMap.get("top")).setDirection("straight").setOvertaking(cars.get(0).getName()).setBlinking("left");
+        assertFalse( checkLegality(lanes, cars, cyclists, pedestrians));
+    }
+
+    @Test
+    public void overtakingCarOnRedLight() {
+        log.info("\n\n---------- Overtaking a car on a red light ----------");
+        cars.get(0).setLane(laneMap.get("top").setTraffic_light("red")).setDirection("standing");
+        cars.get(1).setLane(laneMap.get("top")).setDirection("straight").setOvertaking(cars.get(0).getName()).setBlinking("left");
+        assertFalse( checkLegality(lanes, cars, cyclists, pedestrians));
+    }
+
+    @Test
+    public void overtakingCarPossibleCrash1() {
+        log.info("\n\n---------- Overtaking a car while another car is on the target lane ----------");
+        cars.get(0).setLane(laneMap.get("top")).setDirection("standing");
+        cars.get(1).setLane(laneMap.get("top")).setDirection("straight").setOvertaking(cars.get(0).getName()).setBlinking("left");
+        cars.get(2).setLane(laneMap.get("bottom")).setDirection("straight");
+        assertFalse( checkLegality(lanes, cars, cyclists, pedestrians));
+    }
+
+    @Test
+    public void overtakingCarPossibleCrash2() {
+        log.info("\n\n---------- Overtaking a car while another car is on the target lane - curved steet ----------");
+        cars.get(0).setLane(laneMap.get("top")).setDirection("right").setBlinking("right");
+        cars.get(1).setLane(laneMap.get("top")).setDirection("right").setOvertaking(cars.get(0).getName()).setBlinking("left");
+        cars.get(2).setLane(laneMap.get("left")).setDirection("straight");
+        assertFalse( checkLegality(lanes, cars, cyclists, pedestrians));
+    }
+
+    @Test
+    public void overtakingCarAndImpeding1() {
+        log.info("\n\n---------- Overtaking a car while impeding the other car - Overtaking car is going straight ----------");
+        cars.get(0).setLane(laneMap.get("top")).setDirection("left").setBlinking("left");
+        cars.get(1).setLane(laneMap.get("top")).setDirection("straight").setOvertaking(cars.get(0).getName()).setBlinking("left");
+        assertFalse( checkLegality(lanes, cars, cyclists, pedestrians));
+    }
+
+    @Test
+    public void overtakingCarAndImpeding2() {
+        log.info("\n\n---------- Overtaking a car while impeding the other car - Overtaking car is going right ----------");
+        cars.get(0).setLane(laneMap.get("top")).setDirection("straight");
+        cars.get(1).setLane(laneMap.get("top")).setDirection("right").setOvertaking(cars.get(0).getName()).setBlinking("left");
+        assertFalse( checkLegality(lanes, cars, cyclists, pedestrians));
+    }
+
+    @Test
+    public void overtakingCarAndWithoutImpeding1() {
+        log.info("\n\n---------- Overtaking a car without impeding the other car - Overtaking car is going left ----------");
+        cars.get(0).setLane(laneMap.get("top")).setDirection("straight");
+        cars.get(1).setLane(laneMap.get("top")).setDirection("left").setOvertaking(cars.get(0).getName()).setBlinking("left");
+        assertTrue( checkLegality(lanes, cars, cyclists, pedestrians));
+    }
+
+    @Test
+    public void overtakingCarAndWithoutImpeding2() {
+        log.info("\n\n---------- Overtaking a car without impeding the other car - Overtaking car is going straight ----------");
+        cars.get(0).setLane(laneMap.get("top")).setDirection("straight");
+        cars.get(1).setLane(laneMap.get("top")).setDirection("straight").setOvertaking(cars.get(0).getName()).setBlinking("left");
+        assertTrue( checkLegality(lanes, cars, cyclists, pedestrians));
     }
 
     @Test
