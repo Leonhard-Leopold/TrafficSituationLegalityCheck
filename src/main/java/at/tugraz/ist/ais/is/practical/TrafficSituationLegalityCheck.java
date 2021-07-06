@@ -257,6 +257,14 @@ public class TrafficSituationLegalityCheck {
 				return false;
 			}
 		}
+		//check if car is parking
+		for (Car car : cars) {
+			if(car.isParking()){
+				log.error(car.getName() + " is parking");
+				return false;
+			}
+		}
+		log.info("No car is parking");
 
 		// check if driving on red traffic light
 		for (Car car : cars) {

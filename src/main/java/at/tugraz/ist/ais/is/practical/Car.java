@@ -12,6 +12,10 @@ public class Car {
     private String direction = null;
     private String target_direction = null;
     private Lane target_lane = null;
+    private boolean isParking = false;
+
+    // https://www.oeamtc.at/thema/vorschriften-strafen/die-groessten-parksuenden-was-ist-erlaubt-was-ist-verboten-36486960
+    // parken nur erlaubt wenn 2 weitere fahrbanstreifen für fließverkehr da
 
     public Car(String name, Lane lane, String blinking, String direction) {
         this.name = name;
@@ -28,6 +32,8 @@ public class Car {
             this.direction = direction.replace("driving_", "");;
 
     }
+
+
 
     public Boolean findTarget(Logger log, List<Lane> lanes){
         if (this.getBlinking() != null && !this.getDirection().equals("standing") && !this.getDirection().equals(this.getBlinking())) {
@@ -98,4 +104,6 @@ public class Car {
     public String getTarget_direction() { return target_direction; }
 
     public void setTarget_direction(String target_direction) { this.target_direction = target_direction; }
+
+    public boolean isParking() { return isParking;}
 }
