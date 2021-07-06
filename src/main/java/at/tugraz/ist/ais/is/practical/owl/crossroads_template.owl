@@ -36,9 +36,25 @@
     
 
 
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#is_overtaking -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#is_overtaking">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#on_lane -->
 
     <owl:ObjectProperty rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#on_lane">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#parking_on -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#parking_on">
         <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
     </owl:ObjectProperty>
     
@@ -123,6 +139,14 @@
     
 
 
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#lane_markings_parking_spot -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#lane_markings_parking_spot">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#lane_markings"/>
+    </owl:Class>
+    
+
+
     <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#lane_markings_pedestrians -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#lane_markings_pedestrians">
@@ -135,6 +159,14 @@
 
     <owl:Class rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#lanes">
         <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#environment"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#parking -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#parking">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#states"/>
     </owl:Class>
     
 
@@ -180,6 +212,14 @@
     <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#states -->
 
     <owl:Class rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#states"/>
+    
+
+
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#street_cars -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#street_cars">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#individuals"/>
+    </owl:Class>
     
 
 
@@ -305,6 +345,15 @@
     
 
 
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#grey_car -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#grey_car">
+        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#cars"/>
+        <parking_on rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#left_lane"/>
+    </owl:NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#left -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#left">
@@ -331,6 +380,33 @@
     
 
 
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#parking -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#parking">
+        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#parking"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#parking_spot1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#parking_spot1">
+        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#lane_markings_parking_spot"/>
+        <on_lane rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#left_lane"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#red_car -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#red_car">
+        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#cars"/>
+        <is_overtaking rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#blue_car"/>
+        <on_lane rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#right_lane"/>
+    </owl:NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#right -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#right">
@@ -344,6 +420,15 @@
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#right_lane">
         <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#lanes"/>
         <position rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#right"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#street_car1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#street_car1">
+        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#street_cars"/>
+        <on_lane rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#right_lane"/>
     </owl:NamedIndividual>
     
 
