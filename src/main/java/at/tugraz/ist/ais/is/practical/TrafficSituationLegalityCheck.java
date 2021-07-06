@@ -1,6 +1,7 @@
 package at.tugraz.ist.ais.is.practical;
 
 import org.apache.jena.base.Sys;
+import org.apache.jena.ext.com.google.common.collect.Lists;
 import org.apache.jena.ontology.*;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
@@ -20,6 +21,23 @@ import java.util.*;
 
 import static at.tugraz.ist.ais.is.practical.Utility.*;
 
+//inner class
+class OntData {
+
+	List<Car> cars;
+	List<Lane> lanes;
+	List<Cyclist> cyclists;
+	List<Pedestrian> pedestrians;
+
+	public OntData(List<Car> cars,List<Lane> lanes,List<Cyclist> cyclists, List<Pedestrian> pedestrians) {
+
+		this.cars = cars;
+		this.lanes = lanes;
+		this.cyclists = cyclists;
+		this.pedestrians = pedestrians;
+	}
+
+}
 
 public class TrafficSituationLegalityCheck {
 
@@ -89,37 +107,20 @@ public class TrafficSituationLegalityCheck {
 		}
 	}
 
-	public static void main(String[] args) {
-		OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
-
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-		String file_nr = "1";
-		try {
-			System.out.println("\nWelcome to the Traffic Situation Legality Checker!\n" +
-					"There are X different predefined ontologies you can test.\n" +
-					"Which one do you want to use (Enter the number): ");
-			file_nr = reader.readLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		model.read("src/main/java/at/tugraz/ist/ais/is/practical/owl/crossroads_example"+file_nr+".owl");
-
+	public static OntData loadModelAndParseObjects(OntModel model){
 		String query = String.join(System.lineSeparator(),
-		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
-		"PREFIX owl: <http://www.w3.org/2002/07/owl#>",
-		"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
-		"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
+				"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
+				"PREFIX owl: <http://www.w3.org/2002/07/owl#>",
+				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>",
+				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>",
 				"SELECT distinct ?individual ?property ?relatedObject",
 				"WHERE {",
-					"?individual rdf:type owl:NamedIndividual.",
-					"?individual ?property ?relatedObject .",
-					"filter (?relatedObject != owl:NamedIndividual).",
-					"}",
-		"ORDER BY ?individual");
+				"?individual rdf:type owl:NamedIndividual.",
+				"?individual ?property ?relatedObject .",
+				"filter (?relatedObject != owl:NamedIndividual).",
+				"}",
+				"ORDER BY ?individual");
 
-		log.info("Query execution is created for the example query");
 		QueryExecution qexec = QueryExecutionFactory.create(query, model);
 
 		log.info("Obtains the result set");
@@ -134,8 +135,6 @@ public class TrafficSituationLegalityCheck {
 
 
 		Map<String, Map<String, String>> map =new HashMap<>();
-
-		log.info("Iterates over the result set");
 		while (results.hasNext()) {
 			QuerySolution sol = results.nextSolution();
 			String individual = sol.getResource("individual").toString().split(("#"))[1];
@@ -198,11 +197,51 @@ public class TrafficSituationLegalityCheck {
 			}
 		}
 
-		checkLegality(lanes, cars, cyclists, pedestrians);
+		return new OntData(cars,lanes,cyclists,pedestrians);
+	}
+
+	public static void main(String[] args) {
+		OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		List<String> list = Lists.newArrayList("1");
+		String file_nr = "1";
+
+		try {
+			while(true){
+				System.out.println("\nWelcome to the Traffic Situation Legality Checker!\n" +
+						"There are X different predefined ontologies you can test.\n" +
+						"Which one do you want to use (Enter a number [X-Y] or 'e' for exit): ");
+				file_nr = reader.readLine();
+				if(file_nr.equals("e")){
+					System.out.println("\nEnd");
+					break;
+				}
+				if(list.contains(file_nr)){
+					model.read("src/main/java/at/tugraz/ist/ais/is/practical/owl/crossroads_example"+file_nr+".owl");
+					OntData data = loadModelAndParseObjects(model);
+					checkLegality(data.lanes, data.cars, data.cyclists, data.pedestrians);
+				}
+				else {
+					System.out.println("Ontology not found...");
+				}
+
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+
+
 
 		// TODO Theory questions:
 		//  1. if one lane has a yield sign and the other a stop sign, are the equal, or not
 		//  (if not --> add code to right of way function)
+		// https://www.jusline.at/gesetz/stvo/paragraf/19
+		//Gibt es an einer Kreuzung die Vorschriftszeichen "Vorrang geben" oder "Halt",
+		// so ist den anderen Verkehrsteilnehmern sowohl von links als auch von rechts kommend Vorrang einzuräumen.
+		// Bei "Halt" muss ohnehin das Fahrzeug zum Stillstand gebracht werden. Bei "Vorrang geben" kann aber ein
+		// besonderer Verlauf als Zusatztafel angeführt sein, der zu berücksichtigen ist.
 
 
 	}
