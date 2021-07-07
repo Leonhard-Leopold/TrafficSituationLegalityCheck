@@ -25,7 +25,7 @@ public class TrafficSituationLegalityCheck {
         try {
             while (true) {
                 System.out.println("\nWelcome to the Traffic Situation Legality Checker!\n" +
-                        "There are X different predefined ontologies you can test.\n" +
+                        "There are 15 different predefined ontologies you can test.\n" +
                         "Which one do you want to use (Enter a number [1-15] or 'e' for exit): ");
                 String file_nr = reader.readLine();
                 if (file_nr.equals("e")) {
