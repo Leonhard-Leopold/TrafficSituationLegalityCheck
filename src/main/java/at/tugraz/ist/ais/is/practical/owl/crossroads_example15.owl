@@ -326,6 +326,26 @@
     
 
 
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#car5 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#car5">
+        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#cars"/>
+        <blinking rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#blinking_right"/>
+        <direction rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#driving_right"/>
+        <on_lane rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#left_lane"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#car6 -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#car6">
+        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#cars"/>
+        <on_lane rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#top_lane"/>
+    </owl:NamedIndividual>
+    
+
+
     <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#driving_left -->
 
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#driving_left">
@@ -423,6 +443,15 @@
     <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#top_lane">
         <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#lanes"/>
         <position rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#top"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#yield_top -->
+
+    <owl:NamedIndividual rdf:about="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#yield_top">
+        <rdf:type rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#sign_yield"/>
+        <on_lane rdf:resource="http://www.semanticweb.org/leo/ontologies/2021/4/untitled-ontology-11#top_lane"/>
     </owl:NamedIndividual>
     
 

@@ -7,8 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.FileSystems;
 import java.util.*;
 
 import static at.tugraz.ist.ais.is.practical.Utility.*;
@@ -20,12 +22,11 @@ public class TrafficSituationLegalityCheck {
     public static void main(String[] args) {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        
         try {
             while (true) {
                 System.out.println("\nWelcome to the Traffic Situation Legality Checker!\n" +
                         "There are X different predefined ontologies you can test.\n" +
-                        "Which one do you want to use (Enter a number [1-14] or 'e' for exit): ");
+                        "Which one do you want to use (Enter a number [1-15] or 'e' for exit): ");
                 String file_nr = reader.readLine();
                 if (file_nr.equals("e")) {
                     System.out.println("\nClosing...");
@@ -34,6 +35,8 @@ public class TrafficSituationLegalityCheck {
                 try {
                     OntModel model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
                     model.read("src/main/java/at/tugraz/ist/ais/is/practical/owl/crossroads_example" + file_nr + ".owl");
+                    //model.read("owl/crossroads_example" + file_nr + ".owl")
+
                     OntData data = new OntData();
                     data.loadModelAndParseObjects(model);
                     checkLegality(data.getLanes(), data.getCars(), data.getCyclists(), data.getPedestrians());

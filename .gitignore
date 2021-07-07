@@ -1,3 +1,5 @@
 .idea/vcs.xml
 .idea/codeStyles/codeStyleConfig.xml
 .idea/codeStyles/Project.xml
+out/artifacts/TrafficSituationLegalityCheck_jar/TrafficSituationLegalityCheck.jar
+src/main/java/at/tugraz/ist/ais/is/practical/TrafficSituationLegalityCheck.jar
