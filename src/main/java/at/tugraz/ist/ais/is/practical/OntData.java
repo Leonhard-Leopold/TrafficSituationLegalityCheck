@@ -103,7 +103,7 @@ class OntData {
                             attributes.get("blinking"), attributes.get("direction"), laneMap.get(attributes.get("parking_on")),
                             "car", attributes.get("is_overtaking")));
                     break;
-                case "streetcar":
+                case "street_cars":
                     cars.add(new Car(key, laneMap.get(attributes.get("on_lane")),
                             attributes.get("blinking"), attributes.get("direction"), laneMap.get(attributes.get("parking_on")),
                             "streetcar", attributes.get("is_overtaking")));
@@ -120,10 +120,10 @@ class OntData {
                 case "sign_stop":
                     laneMap.get(attributes.get("on_lane")).setTraffic_sign("stop");
                     break;
-                case "traffic_light_green":
+                case "traffic_lightsgreen":
                     laneMap.get(attributes.get("on_lane")).setTraffic_light("green");
                     break;
-                case "traffic_light_red":
+                case "traffic_lightsred":
                     laneMap.get(attributes.get("on_lane")).setTraffic_light("red");
                     break;
                 case "lane_markings_cyclists":

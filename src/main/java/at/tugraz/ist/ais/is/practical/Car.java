@@ -73,7 +73,7 @@ public class Car {
         else if ((target.equals("right") && position.equals("bottom")) || (target.equals("straight") && position.equals("left")) || (target.equals("left") && position.equals("top")))
             this.setTarget_lane(laneMap.get("right"));
 
-        log.info(this.getName() + " is " + (this.getBlinking() == null ? "not blinking" : "blinking " + this.getBlinking()) + " and is driving " + this.getDirection() +
+        log.info(this.getName() + " is " + (this.getBlinking() == null ? "not blinking" : "blinking " + this.getBlinking()) + " and is " + (Objects.equals(this.getDirection(), "standing") ? "standing" : "driving " + this.getDirection()) +
                 " while being located on the " + position + " lane! Thus, it wants to drive to the lane on the " + this.getTarget_lane().getPosition() + "!");
         return true;
     }

@@ -74,7 +74,7 @@ public class TrafficSituationLegalityCheck {
                 }
             }
         }
-        log.info("No car is driving over a red light");
+        log.info("No car is parking incorrectly");
 
         // check if driving on red traffic light
         for (Car car : cars) {
@@ -130,6 +130,20 @@ public class TrafficSituationLegalityCheck {
         }
         log.info("No car is going to drive over a cyclist");
 
+
+        // check if driving towards pedestrians
+        for (Car car : cars) {
+            Lane tl = car.getTarget_lane();
+            for (Pedestrian pedestrian : pedestrians) {
+                if (!Objects.equals(car.getDirection(), "standing") && tl == pedestrian.getLane()) {
+                    log.error(car.getName() + " is going to drive over a pedestrian");
+                    return false;
+                }
+            }
+        }
+        log.info("No car is going to drive over a pedestrian");
+
+
         // check if a car is overtaking incorrectly
         for (Car car : cars) {
             if (car.getOvertaking() != null) {
@@ -184,20 +198,8 @@ public class TrafficSituationLegalityCheck {
             }
 
         }
-        log.info("No car is going to drive over a cyclist");
+        log.info("No car is overtaking illegally");
 
-
-        // check if driving towards pedestrians
-        for (Car car : cars) {
-            Lane tl = car.getTarget_lane();
-            for (Pedestrian pedestrian : pedestrians) {
-                if (!Objects.equals(car.getDirection(), "standing") && tl == pedestrian.getLane()) {
-                    log.error(car.getName() + " is going to drive over a pedestrian");
-                    return false;
-                }
-            }
-        }
-        log.info("No car is going to drive over a pedestrian");
 
         // check if turning right and someone to your left who does not have to give way is driving straight
         for (Car car1 : cars) {
